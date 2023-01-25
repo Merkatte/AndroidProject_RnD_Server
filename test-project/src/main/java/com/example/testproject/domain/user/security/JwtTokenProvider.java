@@ -37,8 +37,11 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.token-validity-in-seconds}")
-    private long validityInMilliseconds; // 1h;
+    @Value("${jwt.access-token-validity-in-seconds}")
+    private long accessTokenExpiration; // 2h;
+
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
 
     @Autowired
     private MyUserDetails myUserDetails;
@@ -52,28 +55,43 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(String username, List<AppUserRole> appUserRoles) {
+    public String createAccessToken(String refreshToken) {
 
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date expiration = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()//
                 .setClaims(claims)//
                 .setIssuedAt(now)//
-                .setExpiration(validity)//
+                .setExpiration(expiration)//
+                .signWith(key, SignatureAlgorithm.HS256)//
+                .compact();
+    }
+
+    public String createRefreshToken(String email, List<AppUserRole> appUserRoles) {
+
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
+
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + refreshTokenExpiration);
+
+        return Jwts.builder()//
+                .setClaims(claims)//
+                .setIssuedAt(now)//
+                .setExpiration(expiration)//
                 .signWith(key, SignatureAlgorithm.HS256)//
                 .compact();
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = myUserDetails.loadUserByUsername(getEmail(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 

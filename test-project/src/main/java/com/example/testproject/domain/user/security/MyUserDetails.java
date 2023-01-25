@@ -24,7 +24,7 @@ public class MyUserDetails implements UserDetailsService {
         }
 
         return User//
-                .withUsername(appUser.getUsername())//
+                .withUsername(appUser.getUsername())
                 .password(appUser.getPassword())//
                 .authorities(appUser.getAppUserRoles())//
                 .accountExpired(false)//

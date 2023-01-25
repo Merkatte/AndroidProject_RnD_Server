@@ -4,7 +4,12 @@ import com.example.testproject.domain.user.dto.UserLoginDTO;
 import com.example.testproject.domain.user.entity.AppUser;
 import com.example.testproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -20,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public String login(@RequestBody UserLoginDTO params) {
+    public Map<String, String> login(@RequestBody UserLoginDTO params) {
         return userService.signin(params.email(), params.password());
     }
 

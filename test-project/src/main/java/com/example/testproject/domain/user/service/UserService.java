@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +25,17 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
 
-    public String signin(String email, String password) {
+    public Map<String, String> signin(String email, String password) {
         try {
-            System.out.println(email);
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            return jwtTokenProvider.createToken(email, userRepository.findByEmail(email).getAppUserRoles());
+            var refreshToken = jwtTokenProvider.createRefreshToken(email, userRepository.findByEmail(email).getAppUserRoles());
+
+            Map<String, String> tokenResponse = new HashMap<>();
+            tokenResponse.put("refreshToken", refreshToken);
+            tokenResponse.put("accessToken", jwtTokenProvider.createAccessToken(refreshToken));
+            return tokenResponse;
+
         } catch (AuthenticationException e) {
             throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -39,7 +47,7 @@ public class UserService {
             appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
             userRepository.save(appUser);
             System.out.println("is it work?(save)");
-            return jwtTokenProvider.createToken(appUser.getUsername(), appUser.getAppUserRoles());
+            return jwtTokenProvider.createRefreshToken(appUser.getUsername(), appUser.getAppUserRoles());
         } else {
             throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -62,11 +70,11 @@ public class UserService {
     }
 
     public AppUser whoami(HttpServletRequest req) {
-        return userRepository.findByUsername(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
+        return userRepository.findByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
     }
 
-    public String refresh(String username) {
-        return jwtTokenProvider.createToken(username, userRepository.findByUsername(username).getAppUserRoles());
+    public String refresh(String refreshToken) {
+        return jwtTokenProvider.createAccessToken(refreshToken);
     }
 
 }
