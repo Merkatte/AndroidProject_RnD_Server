@@ -1,7 +1,9 @@
 package com.example.testproject.domain.user.security;
 
 import com.example.testproject.domain.user.entity.AppUserRole;
+import com.example.testproject.domain.user.entity.RefreshToken;
 import com.example.testproject.domain.user.exception.CustomException;
+import com.example.testproject.domain.user.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -21,9 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,21 +32,27 @@ public class JwtTokenProvider {
 
     /**
      * THIS IS NOT A SECURE PRACTICE! For simplicity, we are storing a static key here. Ideally, in a
-     * microservices environment, this key would be kept on a config-server.
+     * microservices' environment, this key would be kept on a config-server.
      */
     @Value("${jwt.secret}")
     private String secretKey;
 
     @Value("${jwt.access-token-validity-in-seconds}")
-    private long accessTokenExpiration; // 2h;
+    private Long accessTokenExpiration; // 2h;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
-    private long refreshTokenExpiration;
+    private Long refreshTokenExpiration;
 
     @Autowired
     private MyUserDetails myUserDetails;
 
     private Key key;
+    final private RedisUtil redisUtil;
+    final private TokenRepository tokenRepository;
+
+    public Long getAccessTokenExpiration(){
+        return this.accessTokenExpiration;
+    }
 
     @PostConstruct
     protected void init() {
@@ -70,7 +76,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(String email, List<AppUserRole> appUserRoles) {
+    public Map<String, String> createToken(String email, List<AppUserRole> appUserRoles) {
 
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
@@ -78,12 +84,21 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + refreshTokenExpiration);
 
-        return Jwts.builder()//
+        var refreshToken =  Jwts.builder()//
                 .setClaims(claims)//
                 .setIssuedAt(now)//
                 .setExpiration(expiration)//
                 .signWith(key, SignatureAlgorithm.HS256)//
                 .compact();
+
+        tokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).build());
+        var accessToken = createAccessToken(refreshToken);
+
+        Map<String, String> token = new HashMap<>();
+        token.put("refreshToken", refreshToken);
+        token.put("accessToken", accessToken);
+
+        return token;
     }
 
     public Authentication getAuthentication(String token) {
@@ -97,6 +112,7 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
+
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
@@ -106,6 +122,9 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            if (redisUtil.hasKeyBlackList(token)) {
+                throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -40,7 +40,9 @@ public class WebSecurityConfig {
         http.authorizeRequests()//
                 .antMatchers("/users/signin").permitAll()//
                 .antMatchers("/users/signup").permitAll()//
+                .antMatchers("/users/refresh").permitAll()
                 .antMatchers("/h2-console/**/**").permitAll()
+                .antMatchers("/users/username-is-exist").permitAll()
                 // Disallow everything else..
                 .anyRequest().authenticated();
 
