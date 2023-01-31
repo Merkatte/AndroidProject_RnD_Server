@@ -44,10 +44,6 @@ dependencies {
 	//ModelMapper
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
 
-	//Swagger
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-
 	//Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 

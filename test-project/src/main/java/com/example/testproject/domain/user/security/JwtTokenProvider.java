@@ -61,22 +61,21 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createAccessToken(String refreshToken) {
+//    public String createAccessToken(String refreshToken) {
+//
+//
+//        Date now = new Date();
+//        Date expiration = new Date(now.getTime() + accessTokenExpiration);
+//
+//        return Jwts.builder()//
+//                .setClaims(claims)//
+//                .setIssuedAt(now)//
+//                .setExpiration(expiration)//
+//                .signWith(key, SignatureAlgorithm.HS256)//
+//                .compact();
+//    }
 
-        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
-
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + accessTokenExpiration);
-
-        return Jwts.builder()//
-                .setClaims(claims)//
-                .setIssuedAt(now)//
-                .setExpiration(expiration)//
-                .signWith(key, SignatureAlgorithm.HS256)//
-                .compact();
-    }
-
-    public Map<String, String> createToken(String email, List<AppUserRole> appUserRoles) {
+    public String createToken(String email, List<AppUserRole> appUserRoles) {
 
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
@@ -92,13 +91,8 @@ public class JwtTokenProvider {
                 .compact();
 
         tokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).build());
-        var accessToken = createAccessToken(refreshToken);
-
-        Map<String, String> token = new HashMap<>();
-        token.put("refreshToken", refreshToken);
-        token.put("accessToken", accessToken);
-
-        return token;
+        return refreshToken;
+        //TODO RefreshToken DB 만료기간 삭제
     }
 
     public Authentication getAuthentication(String token) {
@@ -121,8 +115,12 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
+            System.out.println("validate Token : " + token);
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            System.out.println("try success");
+
             if (redisUtil.hasKeyBlackList(token)) {
+                System.out.println("redis error");
                 throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return true;

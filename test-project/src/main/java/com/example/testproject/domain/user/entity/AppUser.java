@@ -17,7 +17,7 @@ public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Size(min = 4, max = 20, message = "Minimum username length: 4 characters")
     @Column(unique = true, nullable = false)

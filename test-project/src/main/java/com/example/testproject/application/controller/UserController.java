@@ -1,7 +1,9 @@
 package com.example.testproject.application.controller;
 
+import com.example.testproject.application.usecase.RefreshUsecase;
+import com.example.testproject.domain.user.dto.LoginResponseDTO;
 import com.example.testproject.domain.user.dto.LogoutDTO;
-import com.example.testproject.domain.user.dto.UserLoginDTO;
+import com.example.testproject.domain.user.dto.LoginDTO;
 import com.example.testproject.domain.user.entity.AppUser;
 import com.example.testproject.domain.user.security.JwtTokenProvider;
 import com.example.testproject.domain.user.service.UserService;
@@ -16,27 +18,27 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     final private UserService userService;
+    final private RefreshUsecase refreshUsecase;
     final private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
-    public Map<String, String> signup(@RequestBody AppUser user){
+    public LoginResponseDTO signup(@RequestBody AppUser user){
         return userService.signup(user);
     }
 
     @PostMapping("/signin")
-    public Map<String, String> signin(@RequestBody UserLoginDTO params) {
+    public LoginResponseDTO signin(@RequestBody LoginDTO params) {
         return userService.signin(params.email(), params.password());
     }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest req, @RequestBody LogoutDTO refreshToken){
-        System.out.println(refreshToken);
         return userService.logout(refreshToken.refreshToken(), jwtTokenProvider.resolveToken(req));
     }
 
     @GetMapping("/refresh")
     public Map<String, String> refresh(HttpServletRequest req){
-        return userService.refresh(jwtTokenProvider.resolveToken(req));
+        return refreshUsecase.execute(jwtTokenProvider.resolveToken(req));
     }
 
     @GetMapping("/username-is-exist")

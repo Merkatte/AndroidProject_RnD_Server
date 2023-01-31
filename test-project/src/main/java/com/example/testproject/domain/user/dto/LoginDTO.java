@@ -1,6 +1,6 @@
 package com.example.testproject.domain.user.dto;
 
-public record UserLoginDTO(
+public record LoginDTO(
         String email,
         String password
 ) {
