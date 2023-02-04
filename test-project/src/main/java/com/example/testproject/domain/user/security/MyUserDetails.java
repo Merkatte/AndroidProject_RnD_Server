@@ -20,7 +20,7 @@ public class MyUserDetails implements UserDetailsService {
         final AppUser appUser = userRepository.findByEmail(email);
 
         if (appUser == null) {
-            throw new UsernameNotFoundException("Email '" + email + "' not found");
+            throw new UsernameNotFoundException("email '" + email + "' not found");
         }
 
         return User//
@@ -34,4 +34,3 @@ public class MyUserDetails implements UserDetailsService {
                 .build();
     }
 }
-

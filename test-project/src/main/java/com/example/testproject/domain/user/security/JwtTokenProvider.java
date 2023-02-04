@@ -4,6 +4,7 @@ import com.example.testproject.domain.user.entity.AppUserRole;
 import com.example.testproject.domain.user.entity.RefreshToken;
 import com.example.testproject.domain.user.exception.CustomException;
 import com.example.testproject.domain.user.repository.TokenRepository;
+import com.example.testproject.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +24,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,6 +52,7 @@ public class JwtTokenProvider {
     private Key key;
     final private RedisUtil redisUtil;
     final private TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     public Long getAccessTokenExpiration(){
         return this.accessTokenExpiration;
@@ -75,33 +79,42 @@ public class JwtTokenProvider {
 //                .compact();
 //    }
 
-    public String createToken(String email, List<AppUserRole> appUserRoles) {
+    public String createRefreshToken(Long id, List<AppUserRole> appUserRoles) {
 
-        Claims claims = Jwts.claims().setSubject(email);
+        var refreshToken = createToken(id, appUserRoles, refreshTokenExpiration);
+        tokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).build());
+
+        return refreshToken;
+        //TODO RefreshToken DB 만료기간 삭제
+    }
+
+    public String createAccessToken(Long id, List<AppUserRole> appUserRoles){
+        return createToken(id, appUserRoles, accessTokenExpiration);
+    }
+
+    private String createToken(Long id, List<AppUserRole> appUserRoles, Long expirationTime) {
+        Claims claims = Jwts.claims().setSubject(id.toString());
         claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
 
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + refreshTokenExpiration);
+        Date expiration = new Date(now.getTime() + expirationTime);
 
-        var refreshToken =  Jwts.builder()//
+        return Jwts.builder()//
                 .setClaims(claims)//
                 .setIssuedAt(now)//
                 .setExpiration(expiration)//
                 .signWith(key, SignatureAlgorithm.HS256)//
                 .compact();
-
-        tokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).build());
-        return refreshToken;
-        //TODO RefreshToken DB 만료기간 삭제
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = myUserDetails.loadUserByUsername(getEmail(token));
+        var userEmail = userRepository.findEmailById(getId(token));
+        UserDetails userDetails = myUserDetails.loadUserByUsername(userEmail.getEmail());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    public Long getId(String token) {
+        return Long.parseLong(Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     public String resolveToken(HttpServletRequest req) {

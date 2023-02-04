@@ -1,9 +1,9 @@
 package com.example.testproject.domain.user.service;
 
 import com.example.testproject.domain.user.dto.LoginResponseDTO;
-import com.example.testproject.domain.user.dto.SimpleUserDataDTO;
 import com.example.testproject.domain.user.entity.AppUser;
 import com.example.testproject.domain.user.exception.CustomException;
+import com.example.testproject.domain.user.repository.FollowRepository;
 import com.example.testproject.domain.user.repository.TokenRepository;
 import com.example.testproject.domain.user.repository.UserRepository;
 import com.example.testproject.domain.user.security.JwtTokenProvider;
@@ -30,13 +30,16 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final RedisUtil redisUtil;
     private final TokenRepository tokenRepository;
+    private final FollowRepository followRepository;
 
     public LoginResponseDTO signin(String email, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             var user = userRepository.findByEmail(email);
-            var refreshToken = jwtTokenProvider.createToken(email, user.getAppUserRoles());
+            var refreshToken = jwtTokenProvider.createRefreshToken(user.getId(), user.getAppUserRoles());
             var accessToken = refresh(refreshToken);
+
+            userRepository.updateUserLastLogin(LocalDateTime.now(), user.getId()); // 마지막 로그인 시간 update
 
             return new LoginResponseDTO(
                     refreshToken,
@@ -46,13 +49,14 @@ public class UserService {
                     LocalDateTime.now()
             );
         } catch (AuthenticationException e) {
+            System.out.println(e.getMessage());
             throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
 
     public LoginResponseDTO signup(AppUser appUser) {
-        if (userRepository.existsByUsername(appUser.getUsername())) {
+        if (!userRepository.existsByUsername(appUser.getUsername())) {
             var password = appUser.getPassword(); // encode 전 password 유지 필요 (for 로그인 처리)
             appUser.setPassword(passwordEncoder.encode(password));
             userRepository.save(appUser);
@@ -75,10 +79,13 @@ public class UserService {
         if (!tokenRepository.existsById(refreshToken)){
             throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        var email = jwtTokenProvider.getEmail(refreshToken);
-        var user = userRepository.findByEmail(email).getAppUserRoles();
+        System.out.println("refresh Token : " + refreshToken);
+        var id = jwtTokenProvider.getId(refreshToken);
+        var userRoles = userRepository.findById(id).getAppUserRoles();
 
-        return jwtTokenProvider.createToken(email, user);
+        var accessToken = jwtTokenProvider.createAccessToken(id, userRoles);
+        System.out.println("refresh 로 생성된 access : " + accessToken);
+        return accessToken;
     }
 
     public Map<String, Boolean> usernameIsExist(String username){
@@ -89,11 +96,6 @@ public class UserService {
         }
         response.put("you-can-use", false);
         return response;
-    }
-
-    public SimpleUserDataDTO getSimpleUserDataByEmail(String email){
-        var user = userRepository.findByEmail(email);
-        return new SimpleUserDataDTO(user.getId(), user.getUsername());
     }
 
     /*

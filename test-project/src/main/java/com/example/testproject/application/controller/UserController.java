@@ -1,10 +1,12 @@
 package com.example.testproject.application.controller;
 
 import com.example.testproject.application.usecase.RefreshUsecase;
+import com.example.testproject.application.usecase.user.FollowUsecase;
 import com.example.testproject.domain.user.dto.LoginResponseDTO;
 import com.example.testproject.domain.user.dto.LogoutDTO;
 import com.example.testproject.domain.user.dto.LoginDTO;
 import com.example.testproject.domain.user.entity.AppUser;
+import com.example.testproject.domain.user.entity.Follow;
 import com.example.testproject.domain.user.security.JwtTokenProvider;
 import com.example.testproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class UserController {
     final private UserService userService;
     final private RefreshUsecase refreshUsecase;
     final private JwtTokenProvider jwtTokenProvider;
+    final private FollowUsecase followUsecase;
 
     @PostMapping("/signup")
     public LoginResponseDTO signup(@RequestBody AppUser user){
@@ -44,6 +47,11 @@ public class UserController {
     @GetMapping("/username-is-exist")
     public Map<String, Boolean> usernameIsExist(@RequestParam String username){
         return userService.usernameIsExist(username);
+    }
+
+    @PostMapping("/follow")
+    public void follow(@RequestBody Follow follow){
+        followUsecase.execute(follow);
     }
 
 }
