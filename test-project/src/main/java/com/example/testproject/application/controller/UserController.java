@@ -1,6 +1,6 @@
 package com.example.testproject.application.controller;
 
-import com.example.testproject.application.usecase.RefreshUsecase;
+import com.example.testproject.application.usecase.user.RefreshUsecase;
 import com.example.testproject.application.usecase.user.FollowUsecase;
 import com.example.testproject.domain.user.dto.LoginResponseDTO;
 import com.example.testproject.domain.user.dto.LogoutDTO;

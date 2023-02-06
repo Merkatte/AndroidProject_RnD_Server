@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<AppUser, Integer> {
 
@@ -18,7 +19,8 @@ public interface UserRepository extends JpaRepository<AppUser, Integer> {
 
     AppUser findByEmail(String email);
 
-    AppUser findById(Long id);
+    Optional<AppUser> findById(Long id);
+
 
     AppUser findEmailById(Long id);
 
@@ -27,6 +29,6 @@ public interface UserRepository extends JpaRepository<AppUser, Integer> {
 
     @Modifying
     @Query("UPDATE AppUser u SET u.lastLogin = :lastLogin where u.id = :id")
-    int updateUserLastLogin(@Param(value="lastLogin")LocalDateTime lastLogin, @Param(value="id") Long id);
+    void updateUserLastLogin(@Param(value="lastLogin")LocalDateTime lastLogin, @Param(value="id") Long id);
 
 }

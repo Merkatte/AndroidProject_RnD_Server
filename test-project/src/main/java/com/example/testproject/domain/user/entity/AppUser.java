@@ -62,4 +62,7 @@ public class AppUser {
     @ElementCollection(fetch = FetchType.EAGER)
     List<AppUserRole> appUserRoles;
 
+//    @OneToMany(mappedBy = "appUser")
+//    private List<Post> post = new ArrayList<>();
+
 }

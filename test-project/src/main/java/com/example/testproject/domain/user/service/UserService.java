@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class UserService {
     private final TokenRepository tokenRepository;
     private final FollowRepository followRepository;
 
+    @Transactional
     public LoginResponseDTO signin(String email, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -55,6 +57,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public LoginResponseDTO signup(AppUser appUser) {
         if (!userRepository.existsByUsername(appUser.getUsername())) {
             var password = appUser.getPassword(); // encode 전 password 유지 필요 (for 로그인 처리)
@@ -81,7 +84,7 @@ public class UserService {
         }
         System.out.println("refresh Token : " + refreshToken);
         var id = jwtTokenProvider.getId(refreshToken);
-        var userRoles = userRepository.findById(id).getAppUserRoles();
+        var userRoles = userRepository.findById(id).orElseThrow().getAppUserRoles();
 
         var accessToken = jwtTokenProvider.createAccessToken(id, userRoles);
         System.out.println("refresh 로 생성된 access : " + accessToken);

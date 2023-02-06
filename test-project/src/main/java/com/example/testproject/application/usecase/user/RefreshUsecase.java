@@ -1,4 +1,4 @@
-package com.example.testproject.application.usecase;
+package com.example.testproject.application.usecase.user;
 
 import com.example.testproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
