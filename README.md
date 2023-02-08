@@ -1,4 +1,4 @@
-# AndroidProject_RnD_Server
+# AndroidProject_RnD_Server RestAPI
 Android Project RnD Server by Spring Boot
 
 JDK : Coretto-18.  
