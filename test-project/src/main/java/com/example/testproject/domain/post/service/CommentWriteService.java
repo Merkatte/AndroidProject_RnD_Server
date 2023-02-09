@@ -4,7 +4,7 @@ import com.example.testproject.domain.post.dto.CommentDTO;
 import com.example.testproject.domain.post.entity.Comment;
 import com.example.testproject.domain.post.repository.CommentRepository;
 import com.example.testproject.domain.post.repository.PostRepository;
-import com.example.testproject.domain.user.exception.CustomException;
+import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,9 +43,8 @@ public class CommentWriteService {
                 .appUser(comment.getAppUser())
                 .post(comment.getPost())
                 .contents(command.contents())
-                .createdAt(LocalDateTime.now())
-                .build());
+                .createdAt(LocalDateTime.now()).build());
 
-        return updateComment.getId();
+        return updateComment.getPost().getId();
     }
 }

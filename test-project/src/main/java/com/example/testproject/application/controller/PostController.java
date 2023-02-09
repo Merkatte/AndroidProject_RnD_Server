@@ -5,7 +5,9 @@ import com.example.testproject.domain.post.dto.PostResponseDTO;
 import com.example.testproject.domain.post.service.PostReadService;
 import com.example.testproject.domain.post.service.PostWriteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,13 +19,16 @@ public class PostController {
     final private PostWriteService postWriteService;
     final private PostReadService postReadService;
 
-    @PostMapping("/create")
-    public PostResponseDTO createPost(@RequestBody PostDTO post){
-        return postWriteService.createPost(post);
+    @PostMapping(value = "/create",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public PostResponseDTO updatePost(@RequestPart PostDTO post, @RequestPart List<MultipartFile> images){
+        return postWriteService.createPost(post, images);
     }
 
-    @PostMapping("/update/{postId}")
-    public PostResponseDTO updatePost(@RequestBody PostDTO post, @PathVariable Long postId){
+    @PostMapping(value = "/update/{postId}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public PostResponseDTO updatePost(@RequestPart PostDTO post, @RequestPart MultipartFile images,
+                                      @PathVariable Long postId){
         return postWriteService.updatePost(post, postId);
     }
     @GetMapping("/{postId}")

@@ -1,6 +1,6 @@
 package com.example.testproject.domain.user.security;
 
-import com.example.testproject.domain.user.exception.CustomException;
+import com.example.testproject.exception.CustomException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;

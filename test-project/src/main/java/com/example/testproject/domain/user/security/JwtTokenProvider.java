@@ -2,7 +2,7 @@ package com.example.testproject.domain.user.security;
 
 import com.example.testproject.domain.user.entity.AppUserRole;
 import com.example.testproject.domain.user.entity.RefreshToken;
-import com.example.testproject.domain.user.exception.CustomException;
+import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.TokenRepository;
 import com.example.testproject.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -65,20 +65,6 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-//    public String createAccessToken(String refreshToken) {
-//
-//
-//        Date now = new Date();
-//        Date expiration = new Date(now.getTime() + accessTokenExpiration);
-//
-//        return Jwts.builder()//
-//                .setClaims(claims)//
-//                .setIssuedAt(now)//
-//                .setExpiration(expiration)//
-//                .signWith(key, SignatureAlgorithm.HS256)//
-//                .compact();
-//    }
-
     public String createRefreshToken(Long id, List<AppUserRole> appUserRoles) {
 
         var refreshToken = createToken(id, appUserRoles, refreshTokenExpiration);
@@ -128,12 +114,8 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            System.out.println("validate Token : " + token);
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            System.out.println("try success");
-
-            if (redisUtil.hasKeyBlackList(token)) {
-                System.out.println("redis error");
+            if (redisUtil.hasKeyBlackList(token) || !tokenRepository.existsById(token)) {
                 throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return true;

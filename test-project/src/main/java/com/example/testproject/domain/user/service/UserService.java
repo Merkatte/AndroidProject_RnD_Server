@@ -2,8 +2,7 @@ package com.example.testproject.domain.user.service;
 
 import com.example.testproject.domain.user.dto.LoginResponseDTO;
 import com.example.testproject.domain.user.entity.AppUser;
-import com.example.testproject.domain.user.exception.CustomException;
-import com.example.testproject.domain.user.repository.FollowRepository;
+import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.TokenRepository;
 import com.example.testproject.domain.user.repository.UserRepository;
 import com.example.testproject.domain.user.security.JwtTokenProvider;
@@ -31,7 +30,6 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final RedisUtil redisUtil;
     private final TokenRepository tokenRepository;
-    private final FollowRepository followRepository;
 
     @Transactional
     public LoginResponseDTO signin(String email, String password) {
@@ -40,16 +38,10 @@ public class UserService {
             var user = userRepository.findByEmail(email);
             var refreshToken = jwtTokenProvider.createRefreshToken(user.getId(), user.getAppUserRoles());
             var accessToken = refresh(refreshToken);
-
             userRepository.updateUserLastLogin(LocalDateTime.now(), user.getId()); // 마지막 로그인 시간 update
 
-            return new LoginResponseDTO(
-                    refreshToken,
-                    accessToken,
-                    user.getId(),
-                    user.getUsername(),
-                    LocalDateTime.now()
-            );
+            return new LoginResponseDTO(refreshToken, accessToken, user);
+
         } catch (AuthenticationException e) {
             System.out.println(e.getMessage());
             throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);

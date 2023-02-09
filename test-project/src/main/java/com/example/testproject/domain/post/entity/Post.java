@@ -40,6 +40,9 @@ public class Post {
     @OneToMany(mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    List<Image> images = new ArrayList<>();
+
     @PrePersist
     private void setDefault(){
         this.createdAt = LocalDateTime.now();

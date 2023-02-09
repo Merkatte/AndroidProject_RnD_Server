@@ -1,7 +1,7 @@
 package com.example.testproject.application.usecase.user;
 
 import com.example.testproject.domain.user.entity.Follow;
-import com.example.testproject.domain.user.exception.CustomException;
+import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.FollowRepository;
 import com.example.testproject.domain.user.repository.UserRepository;
 import com.example.testproject.domain.user.service.FollowService;
