@@ -1,9 +1,14 @@
-# AndroidProject_RnD_Server RestAPI
-Android Project RnD Server by Spring Boot
+## Untitled RnD Project RestAPI Server
 
-JDK : Coretto-18.  
+----------------
 
-Mysql : Ver 8.0.31 for macos13.0 on arm64 (Homebrew)
+### Android Project RnD API Server
 
-1. Gradle Dependecy Run
-2. Build DemoApplication(1)
+### Simple CRUD using Spring Boot / Hibernate / JPA.   
+
+Spring
+- JDK : Coretto-18.  
+
+DB
+- Mysql : Ver 8.0.31 for macos13.0 on arm64 (Homebrew)
+- Redis : Ver 7.0.8
