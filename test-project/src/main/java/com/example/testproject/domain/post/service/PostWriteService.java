@@ -6,10 +6,7 @@ import com.example.testproject.domain.post.entity.Image;
 import com.example.testproject.domain.post.entity.PostLikes;
 import com.example.testproject.domain.post.entity.Post;
 import com.example.testproject.domain.post.entity.Timeline;
-import com.example.testproject.domain.post.repository.ImageRepository;
-import com.example.testproject.domain.post.repository.PostLikesRepository;
-import com.example.testproject.domain.post.repository.PostRepository;
-import com.example.testproject.domain.post.repository.TimelineRepository;
+import com.example.testproject.domain.post.repository.*;
 import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.FollowRepository;
 import com.example.testproject.domain.user.repository.UserRepository;
@@ -43,6 +40,7 @@ public class PostWriteService {
     final private TimelineRepository timelineRepository;
     final private ImageRepository imageRepository;
     final private PostLikesRepository likeRepository;
+    final private PostCategoryRepository postCategoryRepository;
 
     @Value("${static.path}")
     private String rootPath;
@@ -51,8 +49,13 @@ public class PostWriteService {
     public PostResponseDTO createPost(PostDTO command, List<MultipartFile> images){
 
         var appUser = userRepository.findById(command.userId()).orElseThrow();
+        var postCategory = postCategoryRepository.findByName(command.category());
         var post = Post.builder()
-                .appUser(appUser).title(command.title()).contents(command.contents()).build();
+                .appUser(appUser)
+                .title(command.title())
+                .contents(command.contents())
+                .postCategory(postCategory)
+                .build();
         var createPost = postRepository.save(post);
 
         // Timeline PushModel 구현
@@ -69,6 +72,7 @@ public class PostWriteService {
         timelineRepository.saveAll(timelines);
 
         // 이미지 업로드 구현 (다중 이미지)
+
         Path dir = getPath(rootPath); // 이미지 저장 디렉토리 path
         Path url = getPath("localhost:8080/static"); // 이미지 URL path
         var newImages = images.stream().map(i-> saveImage(i, url, dir, createPost)).toList();
@@ -111,9 +115,16 @@ public class PostWriteService {
     }
 
     // --------------- 이미지 업로드 로직 ---------------//
-    private Image saveImage(MultipartFile images, Path url, Path dir, Post post) {
+    private Image saveImage(MultipartFile image, Path url, Path dir, Post post) {
+
+        System.out.println(image.isEmpty());
+        if (image.isEmpty()){
+            System.out.println("is Empty");
+            return null;
+        }
+        System.out.println("is not Empty");
         //원래 파일이름 앞에 uuid를 추가시킴
-        var fileName = images.getOriginalFilename();
+        var fileName = image.getOriginalFilename();
         var saveFileName = uuidFileName(fileName);
 
         try {
@@ -123,7 +134,7 @@ public class PostWriteService {
             if (Files.exists(targetPath)) {
                 throw new CustomException("Failed due to duplicate files.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            images.transferTo(targetPath);
+            image.transferTo(targetPath);
             return imageRepository.save(Image.builder()
                     .post(post)
                     .name(saveFileName)

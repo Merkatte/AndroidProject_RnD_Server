@@ -1,8 +1,11 @@
 package com.example.testproject.application.controller;
 
 import com.example.testproject.domain.post.dto.LikesDTO;
+import com.example.testproject.domain.post.dto.PostCategoryDTO;
 import com.example.testproject.domain.post.dto.PostDTO;
 import com.example.testproject.domain.post.dto.PostResponseDTO;
+import com.example.testproject.domain.post.entity.PostCategory;
+import com.example.testproject.domain.post.service.PostCategoryWriteService;
 import com.example.testproject.domain.post.service.PostReadService;
 import com.example.testproject.domain.post.service.PostWriteService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.util.List;
 public class PostController {
     final private PostWriteService postWriteService;
     final private PostReadService postReadService;
+    final private PostCategoryWriteService postCategoryWriteService;
 
     @PostMapping(value = "/create",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -52,6 +56,10 @@ public class PostController {
     public List<PostResponseDTO> postBoard(Pageable pageable){
         return postReadService.getBoard(pageable);
 
+    }
+    @PostMapping("/create-category")
+    public PostCategory createPostCategory(@RequestBody PostCategoryDTO postCategoryDTO){
+        return postCategoryWriteService.createPostCategory(postCategoryDTO);
     }
 
 }

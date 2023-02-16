@@ -6,7 +6,7 @@ import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.TokenRepository;
 import com.example.testproject.domain.user.repository.UserRepository;
 import com.example.testproject.domain.user.security.JwtTokenProvider;
-import com.example.testproject.domain.user.security.RedisUtil;
+import com.example.testproject.domain.user.entity.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;

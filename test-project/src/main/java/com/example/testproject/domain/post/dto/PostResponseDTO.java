@@ -19,6 +19,7 @@ public class PostResponseDTO{
     LocalDateTime createdAt;
     List<CommentResponseDTO> comments;
     List<ImageResponseDTO> images;
+    String postCategory;
 
     @Builder
     public PostResponseDTO(Post post){
@@ -29,6 +30,7 @@ public class PostResponseDTO{
         this.createdAt = post.getCreatedAt();
         this.comments = post.getComments().stream().map(CommentResponseDTO::new).collect(Collectors.toList());
         this.images = post.getImages().stream().map(ImageResponseDTO::new).collect(Collectors.toList());
+        this.postCategory = post.getPostCategory().getName();
     }
 
     @Builder
@@ -40,6 +42,7 @@ public class PostResponseDTO{
         this.createdAt = post.getCreatedAt();
         this.comments = post.getComments().stream().map(CommentResponseDTO::new).collect(Collectors.toList());
         this.images = images.stream().map(ImageResponseDTO::new).collect(Collectors.toList());
+        this.postCategory = post.getPostCategory().getName();
     }
 
 }

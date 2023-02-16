@@ -1,4 +1,4 @@
-package com.example.testproject.domain.user.security;
+package com.example.testproject.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

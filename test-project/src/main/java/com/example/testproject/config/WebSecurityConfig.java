@@ -1,5 +1,7 @@
-package com.example.testproject.domain.user.security;
+package com.example.testproject.config;
 
+import com.example.testproject.domain.user.security.JwtTokenFilterConfigurer;
+import com.example.testproject.domain.user.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,8 +43,10 @@ public class WebSecurityConfig {
                 .antMatchers("/users/signup").permitAll()//
                 .antMatchers("/users/refresh").permitAll()
                 .antMatchers("/post/{postId}").permitAll()
+                .antMatchers("/timeline/**").permitAll()
                 .antMatchers("/static/**").permitAll()
                 .antMatchers("/users/username-is-exist").permitAll()
+//                .antMatchers("/post/create-category").hasRole("ROLE_ADMIN")
                 // Disallow everything else..
                 .anyRequest().authenticated();
 

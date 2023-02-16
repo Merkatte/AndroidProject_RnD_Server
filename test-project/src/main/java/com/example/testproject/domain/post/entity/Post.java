@@ -38,10 +38,14 @@ public class Post {
     private LocalDate createdDate;
 
     @OneToMany(mappedBy = "post")
-    List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    List<Image> images = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private PostCategory postCategory;
 
     @PrePersist
     private void setDefault(){
@@ -50,12 +54,13 @@ public class Post {
     }
 
     @Builder
-    public Post(Long id, AppUser appUser, String title, String contents, LocalDateTime createdAt, LocalDate createdDate) {
+    public Post(Long id, AppUser appUser, String title, String contents, LocalDateTime createdAt, LocalDate createdDate, PostCategory postCategory) {
         this.id = id;
         this.appUser = appUser;
         this.title = title;
         this.contents = contents;
         this.createdAt = createdAt;
         this.createdDate = createdDate;
+        this.postCategory = postCategory;
     }
 }

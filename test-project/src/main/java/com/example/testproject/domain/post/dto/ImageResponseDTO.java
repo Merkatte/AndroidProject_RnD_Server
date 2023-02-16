@@ -11,7 +11,7 @@ public class ImageResponseDTO {
 
     @Builder
     public ImageResponseDTO(Image image){
-        this.path = image.getPath();
-        this.name = image.getName();
+        this.path = image == null ? null : image.getPath();
+        this.name = image == null ? null : image.getName();
     }
 }

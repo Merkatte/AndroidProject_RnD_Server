@@ -1,6 +1,7 @@
 package com.example.testproject.domain.user.security;
 
 import com.example.testproject.domain.user.entity.AppUserRole;
+import com.example.testproject.domain.user.entity.RedisUtil;
 import com.example.testproject.domain.user.entity.RefreshToken;
 import com.example.testproject.exception.CustomException;
 import com.example.testproject.domain.user.repository.TokenRepository;

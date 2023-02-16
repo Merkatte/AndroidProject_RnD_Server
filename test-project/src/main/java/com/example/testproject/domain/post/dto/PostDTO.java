@@ -6,6 +6,7 @@ import lombok.Builder;
 public record PostDTO(
         Long userId,
         String title,
-        String contents
+        String contents,
+        String category
 ) {
 }

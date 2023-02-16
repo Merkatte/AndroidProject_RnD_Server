@@ -1,4 +1,4 @@
-package com.example.testproject.domain.user.security;
+package com.example.testproject.domain.user.entity;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
