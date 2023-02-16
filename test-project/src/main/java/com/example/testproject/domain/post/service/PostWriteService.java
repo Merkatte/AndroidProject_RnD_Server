@@ -3,9 +3,11 @@ package com.example.testproject.domain.post.service;
 import com.example.testproject.domain.post.dto.PostDTO;
 import com.example.testproject.domain.post.dto.PostResponseDTO;
 import com.example.testproject.domain.post.entity.Image;
+import com.example.testproject.domain.post.entity.PostLikes;
 import com.example.testproject.domain.post.entity.Post;
 import com.example.testproject.domain.post.entity.Timeline;
 import com.example.testproject.domain.post.repository.ImageRepository;
+import com.example.testproject.domain.post.repository.PostLikesRepository;
 import com.example.testproject.domain.post.repository.PostRepository;
 import com.example.testproject.domain.post.repository.TimelineRepository;
 import com.example.testproject.exception.CustomException;
@@ -40,6 +42,7 @@ public class PostWriteService {
     final private FollowRepository followRepository;
     final private TimelineRepository timelineRepository;
     final private ImageRepository imageRepository;
+    final private PostLikesRepository likeRepository;
 
     @Value("${static.path}")
     private String rootPath;
@@ -93,6 +96,19 @@ public class PostWriteService {
 
         return new PostResponseDTO(updatePost);
     } // TODO updatePost 이미지 수정 로직 추가 필요.... 현재 update 이미지 수정 불가...
+
+    @Transactional
+    public void postLikes(Long userId, Long postId){
+
+        var likes = likeRepository.findByUserIdAndPostId(userId, postId);
+        if (likes == null){
+            likeRepository.save(PostLikes.builder().userId(userId).postId(postId).build());
+        }
+        else{
+            likeRepository.delete(likes);
+        }
+
+    }
 
     // --------------- 이미지 업로드 로직 ---------------//
     private Image saveImage(MultipartFile images, Path url, Path dir, Post post) {

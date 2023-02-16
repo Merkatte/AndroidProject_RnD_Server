@@ -40,7 +40,14 @@ public class UserService {
             var accessToken = refresh(refreshToken);
             userRepository.updateUserLastLogin(LocalDateTime.now(), user.getId()); // 마지막 로그인 시간 update
 
-            return new LoginResponseDTO(refreshToken, accessToken, user);
+            return LoginResponseDTO.builder()
+                    .userId(user.getId())
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .username(user.getUsername())
+                    .loginAt(user.getLastLogin())
+                    .appUserRoles(user.getAppUserRoles())
+                    .build();
 
         } catch (AuthenticationException e) {
             System.out.println(e.getMessage());

@@ -115,7 +115,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            if (redisUtil.hasKeyBlackList(token) || !tokenRepository.existsById(token)) {
+            if (redisUtil.hasKeyBlackList(token)) {
                 throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return true;
