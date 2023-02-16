@@ -37,6 +37,7 @@ public class PostController {
                                       @PathVariable Long postId){
         return postWriteService.updatePost(post, postId);
     }
+
     @GetMapping("/{postId}")
     public PostResponseDTO getPost(@PathVariable Long postId){
         return postReadService.getPost(postId);
@@ -55,11 +56,16 @@ public class PostController {
     @GetMapping("/board")
     public List<PostResponseDTO> postBoard(Pageable pageable){
         return postReadService.getBoard(pageable);
-
     }
+
     @PostMapping("/create-category")
     public PostCategory createPostCategory(@RequestBody PostCategoryDTO postCategoryDTO){
         return postCategoryWriteService.createPostCategory(postCategoryDTO);
+    }
+
+    @GetMapping("/category")
+    public List<PostResponseDTO> getPostCategory(@RequestParam("categoryName") String categoryName){
+        return postReadService.getBoardByCategory(categoryName);
     }
 
 }
