@@ -32,8 +32,8 @@ public class PostReadService {
         return posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
     }
 
-    public List<PostResponseDTO> getBoardByCategory(String categoryName){
-        var posts = postRepository.findByPostCategoryName(categoryName);
+    public List<PostResponseDTO> getBoardByCategory(String categoryName, Pageable pageable){
+        var posts = postRepository.findByPostCategoryName(categoryName, pageable);
         return posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
         //TODO Pagination 구현 필요
     }

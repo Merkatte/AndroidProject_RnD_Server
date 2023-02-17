@@ -12,5 +12,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByIdIn(List<Long> id);
     Page<Post> findAll(Pageable pageable);
-    List<Post> findByPostCategoryName(String name);
+    Page<Post> findByPostCategoryName(String name, Pageable pageable);
 }

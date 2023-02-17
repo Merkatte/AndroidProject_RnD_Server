@@ -64,8 +64,8 @@ public class PostController {
     }
 
     @GetMapping("/category")
-    public List<PostResponseDTO> getPostCategory(@RequestParam("categoryName") String categoryName){
-        return postReadService.getBoardByCategory(categoryName);
+    public List<PostResponseDTO> getPostCategory(@RequestParam("categoryName") String categoryName, Pageable pageable){
+        return postReadService.getBoardByCategory(categoryName, pageable);
     }
 
 }
