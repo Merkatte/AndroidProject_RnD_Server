@@ -26,6 +26,11 @@ public class AuctionController {
         return itemWriteService.registerItemType(itemTypeCommand.name(), itemTypeCommand.partsName());
     }
 
+    @GetMapping("/item-type")
+    public List<ItemType> getItemType(@RequestParam("partsId") Long partsId){
+        return itemReadService.getItemType(partsId);
+    }
+
     @PostMapping("/item-rarity")
     public ItemRarity registerItemType(@RequestBody ItemRarityRequestDTO itemRarityCommand){
         return itemWriteService.registerItemRarity(itemRarityCommand.name());
@@ -34,6 +39,11 @@ public class AuctionController {
     @PostMapping("/item-parts")
     public ItemParts registerItemParts(@RequestBody ItemPartsRequestDTO itemPartsCommand){
         return itemWriteService.registerItemParts(itemPartsCommand.name());
+    }
+
+    @GetMapping("/item-parts")
+    public List<ItemParts> getItemParts(){
+        return itemReadService.getItemParts();
     }
 
     @PostMapping("/classes")

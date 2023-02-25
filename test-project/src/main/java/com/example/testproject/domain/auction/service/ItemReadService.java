@@ -5,8 +5,12 @@ import com.example.testproject.domain.auction.dto.AuctionSearchResultResponseDTO
 import com.example.testproject.domain.auction.dto.ItemResponseDTO;
 import com.example.testproject.domain.auction.entity.AuctionItems;
 import com.example.testproject.domain.auction.entity.Item;
+import com.example.testproject.domain.auction.entity.ItemParts;
+import com.example.testproject.domain.auction.entity.ItemType;
 import com.example.testproject.domain.auction.repository.AuctionItemsRepository;
+import com.example.testproject.domain.auction.repository.ItemPartsRepository;
 import com.example.testproject.domain.auction.repository.ItemRepository;
+import com.example.testproject.domain.auction.repository.ItemTypeRepository;
 import com.example.testproject.domain.auction.specification.AuctionItemsSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +28,16 @@ public class ItemReadService {
 
     final private ItemRepository itemRepository;
     private final AuctionItemsRepository auctionItemsRepository;
+    private final ItemTypeRepository itemTypeRepository;
+    private final ItemPartsRepository itemPartsRepository;
 
+    public List<ItemType> getItemType(Long partsId){
+        return itemTypeRepository.findByItemPartsId(partsId);
+    }
+
+    public List<ItemParts> getItemParts(){
+        return itemPartsRepository.findAll();
+    }
     public List<ItemResponseDTO> getItems(){
         var items = itemRepository.findAll();
         System.out.println(items.size());
