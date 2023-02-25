@@ -37,4 +37,11 @@ public class PostReadService {
         return posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
         //TODO Pagination 구현 필요
     }
+
+    public List<PostResponseDTO> getBoardByUserId(Long userId, Pageable pageable){
+        var posts = postRepository.findByAppUserId(userId, pageable);
+        return posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
+        //TODO Pagination 구현 필요
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.testproject.application.controller;
 
+import com.example.testproject.application.usecase.post.PostFilterUsecase;
 import com.example.testproject.domain.post.dto.LikesDTO;
 import com.example.testproject.domain.post.dto.PostCategoryDTO;
 import com.example.testproject.domain.post.dto.PostDTO;
@@ -24,6 +25,7 @@ public class PostController {
     final private PostWriteService postWriteService;
     final private PostReadService postReadService;
     final private PostCategoryWriteService postCategoryWriteService;
+    final private PostFilterUsecase postFilterUsecase;
 
     @PostMapping(value = "/create",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -53,19 +55,30 @@ public class PostController {
         postWriteService.postLikes(likesDTO.userId(), postId);
     }
 
-    @GetMapping("/board")
-    public List<PostResponseDTO> postBoard(Pageable pageable){
-        return postReadService.getBoard(pageable);
-    }
-
     @PostMapping("/create-category")
     public PostCategory createPostCategory(@RequestBody PostCategoryDTO postCategoryDTO){
         return postCategoryWriteService.createPostCategory(postCategoryDTO);
+    }
+
+    @GetMapping("/board")
+    public List<PostResponseDTO> postBoard(Pageable pageable){
+        return postReadService.getBoard(pageable);
     }
 
     @GetMapping("/category")
     public List<PostResponseDTO> getPostCategory(@RequestParam("categoryName") String categoryName, Pageable pageable){
         return postReadService.getBoardByCategory(categoryName, pageable);
     }
+
+    @GetMapping("/user")
+    public List<PostResponseDTO> getPostUserId(@RequestParam("userId") Long userId, Pageable pageable){
+        return postReadService.getBoardByUserId(userId, pageable);
+    }
+
+//    @GetMapping("/filter")
+//    public List<PostResponseDTO> getPostByFilter(@RequestParam FilterKeywordDTO filterKeyword, Pageable pageable){
+//        return postFilterUsecase.execute(filterKeyword, pageable);
+//    }
+
 
 }
