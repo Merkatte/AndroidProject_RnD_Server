@@ -1,6 +1,5 @@
 package com.example.testproject.domain.auction.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ public class ItemType {
     @Column(nullable = false)
     String name;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "item_parts_id")
     ItemParts itemParts;

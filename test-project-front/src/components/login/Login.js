@@ -26,7 +26,6 @@ const Login = () => {
     }, [user, pwd])
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
         try {
             console.log(user, pwd);
             const response = await axios.post(LOGIN_URL,
