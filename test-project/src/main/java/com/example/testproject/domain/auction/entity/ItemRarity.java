@@ -1,24 +1,25 @@
 package com.example.testproject.domain.auction.entity;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class ItemRarity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    Integer tier;
 
     @Column(nullable = false)
     String name;
 
     @Builder
-    public ItemRarity(Long id, String name) {
-        this.id = id;
+    public ItemRarity(String name, Integer tier) {
         this.name = name;
+        this.tier = tier;
     }
 }

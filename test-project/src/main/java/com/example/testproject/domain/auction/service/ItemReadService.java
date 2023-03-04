@@ -1,16 +1,11 @@
 package com.example.testproject.domain.auction.service;
 
-import com.example.testproject.domain.auction.dto.AuctionResponseDTO;
-import com.example.testproject.domain.auction.dto.AuctionSearchResultResponseDTO;
-import com.example.testproject.domain.auction.dto.ItemResponseDTO;
-import com.example.testproject.domain.auction.entity.AuctionItems;
-import com.example.testproject.domain.auction.entity.Item;
-import com.example.testproject.domain.auction.entity.ItemParts;
-import com.example.testproject.domain.auction.entity.ItemType;
-import com.example.testproject.domain.auction.repository.AuctionItemsRepository;
-import com.example.testproject.domain.auction.repository.ItemPartsRepository;
-import com.example.testproject.domain.auction.repository.ItemRepository;
-import com.example.testproject.domain.auction.repository.ItemTypeRepository;
+import com.example.testproject.domain.auction.dto.response.AuctionResponseDTO;
+import com.example.testproject.domain.auction.dto.response.AuctionSearchResultResponseDTO;
+import com.example.testproject.domain.auction.dto.response.ItemResponseDTO;
+import com.example.testproject.domain.auction.dto.response.SearchKeyApiResponseDTO;
+import com.example.testproject.domain.auction.entity.*;
+import com.example.testproject.domain.auction.repository.*;
 import com.example.testproject.domain.auction.specification.AuctionItemsSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +25,7 @@ public class ItemReadService {
     private final AuctionItemsRepository auctionItemsRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final ItemPartsRepository itemPartsRepository;
+    private final ItemRarityRepository itemRarityRepository;
 
     public List<ItemType> getItemType(Long partsId){
         return itemTypeRepository.findByItemPartsId(partsId);
@@ -37,6 +33,10 @@ public class ItemReadService {
 
     public List<ItemParts> getItemParts(){
         return itemPartsRepository.findAll();
+    }
+
+    public List<ItemRarity> getItemRarity(){
+        return itemRarityRepository.findAll();
     }
     public List<ItemResponseDTO> getItems(){
         var items = itemRepository.findAll();
@@ -69,5 +69,14 @@ public class ItemReadService {
     public AuctionResponseDTO getAuctionItem(Long auctionItemsId){
         var auctionItem = auctionItemsRepository.findById(auctionItemsId).orElseThrow();
         return new AuctionResponseDTO(auctionItem);
+    }
+
+    public SearchKeyApiResponseDTO getSearchKeyApi() {
+        List<ItemParts> itemParts = itemPartsRepository.findAll();
+        List<ItemType> itemTypes = itemTypeRepository.findAll();
+        List<ItemRarity> itemRarities = itemRarityRepository.findAll();
+        List<Item> items = itemRepository.findAll();
+        return new SearchKeyApiResponseDTO(itemParts, itemTypes, itemRarities, items);
+
     }
 }

@@ -6,7 +6,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,27 +28,10 @@ public class AppUser {
     @Size(min = 8, message = "Minimum password length: 8 characters")
     @Column(nullable = false)
     private String password;
-
-    @Size(max = 30)
-    @Column(nullable = false)
-    private String fullName;
-
-    @Column(nullable = false)
-    private LocalDate birth;
-
-    @Size(max = 20)
-    @Column(nullable = false)
-    private String phoneNumber;
-
     @PrePersist
     public void setDefault(){
         this.createdAt = LocalDateTime.now();
-        this.emailVerified = false;
-        this.phoneNumberVerified = false;
     }
-    private Boolean emailVerified;
-
-    private Boolean phoneNumberVerified;
 
     private LocalDateTime createdAt;
 
@@ -62,7 +44,5 @@ public class AppUser {
     @ElementCollection(fetch = FetchType.EAGER)
     List<AppUserRole> appUserRoles;
 
-//    @OneToMany(mappedBy = "appUser")
-//    private List<Post> post = new ArrayList<>();
 
 }

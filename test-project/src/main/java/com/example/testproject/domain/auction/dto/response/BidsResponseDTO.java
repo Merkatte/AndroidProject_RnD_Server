@@ -1,4 +1,4 @@
-package com.example.testproject.domain.auction.dto;
+package com.example.testproject.domain.auction.dto.response;
 
 import com.example.testproject.domain.auction.entity.Bids;
 import lombok.Getter;

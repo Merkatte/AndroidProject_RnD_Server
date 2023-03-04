@@ -1,6 +1,10 @@
 package com.example.testproject.application.controller;
 
-import com.example.testproject.domain.auction.dto.*;
+import com.example.testproject.domain.auction.dto.request.*;
+import com.example.testproject.domain.auction.dto.response.AuctionResponseDTO;
+import com.example.testproject.domain.auction.dto.response.AuctionSearchResultResponseDTO;
+import com.example.testproject.domain.auction.dto.response.ItemResponseDTO;
+import com.example.testproject.domain.auction.dto.response.SearchKeyApiResponseDTO;
 import com.example.testproject.domain.auction.entity.*;
 import com.example.testproject.domain.auction.service.ClassesWriteService;
 import com.example.testproject.domain.auction.service.ItemReadService;
@@ -26,19 +30,27 @@ public class AuctionController {
         return itemWriteService.registerItemType(itemTypeCommand.name(), itemTypeCommand.partsName());
     }
 
-    @GetMapping("/item-type")
-    public List<ItemType> getItemType(@RequestParam("partsId") Long partsId){
-        return itemReadService.getItemType(partsId);
-    }
-
     @PostMapping("/item-rarity")
     public ItemRarity registerItemType(@RequestBody ItemRarityRequestDTO itemRarityCommand){
-        return itemWriteService.registerItemRarity(itemRarityCommand.name());
+        return itemWriteService.registerItemRarity(itemRarityCommand);
     }
 
     @PostMapping("/item-parts")
     public ItemParts registerItemParts(@RequestBody ItemPartsRequestDTO itemPartsCommand){
         return itemWriteService.registerItemParts(itemPartsCommand.name());
+    }
+    @GetMapping("/item-api")
+    public SearchKeyApiResponseDTO getSearchKeyApi(){
+        return itemReadService.getSearchKeyApi();
+    }
+
+    @GetMapping("/item-type")
+    public List<ItemType> getItemType(@RequestParam("partsId") Long partsId){
+        return itemReadService.getItemType(partsId);
+    }
+    @GetMapping("/item-rarity")
+    public List<ItemRarity> getItemRarity(){
+        return itemReadService.getItemRarity();
     }
 
     @GetMapping("/item-parts")

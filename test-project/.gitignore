@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### Properties ###
-test-project/src/main/resources/application.properties
+*.properties

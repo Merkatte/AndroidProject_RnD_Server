@@ -46,6 +46,7 @@ public class WebSecurityConfig {
                 .antMatchers("/timeline/**").permitAll()
                 .antMatchers("/static/**").permitAll()
                 .antMatchers("/users/username-is-exist").permitAll()
+                .antMatchers("/auction/**").permitAll()
 //                .antMatchers("/post/create-category").hasRole("ROLE_ADMIN")
                 // Disallow everything else..
                 .anyRequest().authenticated();

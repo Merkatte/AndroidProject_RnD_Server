@@ -1,6 +1,7 @@
 package com.example.testproject.domain.auction.service;
 
-import com.example.testproject.domain.auction.dto.ItemRequestDTO;
+import com.example.testproject.domain.auction.dto.request.ItemRarityRequestDTO;
+import com.example.testproject.domain.auction.dto.request.ItemRequestDTO;
 import com.example.testproject.domain.auction.entity.*;
 import com.example.testproject.domain.auction.repository.*;
 import com.example.testproject.exception.CustomException;
@@ -28,8 +29,8 @@ public class ItemWriteService {
         return itemTypeRepository.save(ItemType.builder().name(itemType).itemParts(itemPartsRepository.findByName(itemParts)).build());
     }
 
-    public ItemRarity registerItemRarity(String itemRarity){
-        return itemRarityRepository.save(ItemRarity.builder().name(itemRarity).build());
+    public ItemRarity registerItemRarity(ItemRarityRequestDTO itemRarityCommand){
+        return itemRarityRepository.save(ItemRarity.builder().tier(itemRarityCommand.getTier()).name(itemRarityCommand.getName()).build());
     }
 
     public ItemParts registerItemParts(String itemParts){
