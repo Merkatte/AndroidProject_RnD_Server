@@ -49,16 +49,31 @@ public class ItemReadService {
         return auctionItems.stream().map(AuctionSearchResultResponseDTO::new).toList();
     }
 
-    public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(String itemName, Map<String, String> options, Pageable pageable){
-        Item item = itemRepository.findByName(itemName);
-        Specification<AuctionItems> spec = Specification.where(AuctionItemsSpecification.equalSearchKey("item", item));
+    public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(Map<String, String> options, Pageable pageable){
+        Specification<AuctionItems> spec = Specification.where(null);
+
+        //option key type별 specification search
+        //String : itemName
+        //Integer : itemCategory (itemType, itemParts)
+        //Float : itemOptions
         for (Map.Entry<String, String> entry : options.entrySet()){
             String option = entry.getKey();
-            if (Objects.equals(option, "page") || Objects.equals(option, "size") || Objects.equals(option, "order")){
+            if (Objects.equals(option, "page") || Objects.equals(option, "size") || Objects.equals(option, "order")){ // Pageable parameter 제외
                 continue;
             }
-            Float value = Float.parseFloat(entry.getValue());
-            spec = spec.and(AuctionItemsSpecification.greaterThanOptionValue(option, value));
+            else if(Objects.equals(option, "itemName")){
+                Item item = itemRepository.findByName(entry.getValue());
+                spec = spec.and(AuctionItemsSpecification.equalItemName("item", item));
+            }
+            else if(!entry.getValue().contains(".")){
+                Long value = Long.parseLong(entry.getValue());
+                spec = spec.and(AuctionItemsSpecification.equalItemCategory(option, value));
+            }
+            else{
+                Float value = Float.parseFloat(entry.getValue());
+                spec = spec.and(AuctionItemsSpecification.greaterThanOptionValue(option, value));
+            }
+
         }
 
         Page<AuctionItems> searchItems =  auctionItemsRepository.findAll(spec, pageable);
@@ -72,11 +87,11 @@ public class ItemReadService {
     }
 
     public SearchKeyApiResponseDTO getSearchKeyApi() {
-        List<ItemParts> itemParts = itemPartsRepository.findAll();
         List<ItemType> itemTypes = itemTypeRepository.findAll();
+        List<ItemParts> itemParts = itemPartsRepository.findAll();
         List<ItemRarity> itemRarities = itemRarityRepository.findAll();
         List<Item> items = itemRepository.findAll();
         return new SearchKeyApiResponseDTO(itemParts, itemTypes, itemRarities, items);
-
     }
+
 }

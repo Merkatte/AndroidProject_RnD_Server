@@ -4,10 +4,7 @@ import com.example.testproject.domain.auction.entity.AuctionItems;
 import com.example.testproject.domain.auction.entity.Item;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 public class AuctionItemsSpecification {
     public static Specification<AuctionItems> greaterThanOptionValue(String option, Float value){
@@ -19,7 +16,17 @@ public class AuctionItemsSpecification {
         };
     }
 
-    public static Specification<AuctionItems> equalSearchKey(String key, Item item){
+    public static Specification<AuctionItems> equalItemCategory(String option, Long value){
+        return new Specification<AuctionItems>() {
+            @Override
+            public Predicate toPredicate(Root<AuctionItems> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                Join<Item, AuctionItems> categorizedItem = root.join("item");
+                return criteriaBuilder.equal(categorizedItem.get(option), value);
+            }
+        };
+    }
+
+    public static Specification<AuctionItems> equalItemName(String key, Item item){
         return new Specification<AuctionItems>() {
             @Override
             public Predicate toPredicate(Root<AuctionItems> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

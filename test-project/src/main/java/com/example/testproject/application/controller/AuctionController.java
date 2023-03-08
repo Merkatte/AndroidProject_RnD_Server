@@ -83,12 +83,11 @@ public class AuctionController {
         return itemReadService.getAuctionItems();
     }
 
-    @GetMapping("/search/{itemName}")
-    public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(@PathVariable String itemName,
-                                                                      Pageable pageable,
+    @GetMapping("/search")
+    public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(Pageable pageable,
                                                           @RequestParam Map<String, String> options){
 
-        return itemReadService.getAuctionItemsSearch(itemName, options, pageable);
+        return itemReadService.getAuctionItemsSearch(options, pageable);
     }
 
     @GetMapping("/{auctionItemsId}")
