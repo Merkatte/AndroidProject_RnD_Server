@@ -24,7 +24,7 @@ public class AuctionItemsSpecification {
                 return criteriaBuilder.equal(categorizedItem.get(option), value);
             }
         };
-    }
+    }   
 
     public static Specification<AuctionItems> equalItemName(String key, Item item){
         return new Specification<AuctionItems>() {

@@ -39,17 +39,9 @@ public class WebSecurityConfig {
 
         // Entry points
         http.authorizeRequests()//
-                .antMatchers("/users/signin").permitAll()//
-                .antMatchers("/users/signup").permitAll()//
-                .antMatchers("/users/refresh").permitAll()
-                .antMatchers("/post/{postId}").permitAll()
-                .antMatchers("/timeline/**").permitAll()
-                .antMatchers("/static/**").permitAll()
-                .antMatchers("/users/username-is-exist").permitAll()
-                .antMatchers("/auction/**").permitAll()
+                .antMatchers("/users/logout").authenticated()
 //                .antMatchers("/post/create-category").hasRole("ROLE_ADMIN")
-                // Disallow everything else..
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
 
         // Apply JWT
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));

@@ -60,9 +60,9 @@ public class ItemWriteService {
 
     public Bids bidsItem(Long auctionItemsId, Bids bids){
         AuctionItems auctionItem = auctionItemsRepository.findById(auctionItemsId).orElseThrow();
-        if (Objects.equals(bids.getAppUser().getId(), auctionItem.getAppUser().getId())){
+        if (Objects.equals(bids.getAppUser().getId(), auctionItem.getAppUser().getId())) {
             throw new CustomException("경매 주인은 입찰할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
-        return bidsRepository.save(bids);
+        return bidsRepository.save(Bids.builder().gold(bids.getGold()).appUser(bids.getAppUser()).auctionItems(auctionItem).build());
     }
 }

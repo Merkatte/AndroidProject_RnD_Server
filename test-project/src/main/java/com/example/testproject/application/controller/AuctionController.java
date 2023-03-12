@@ -96,7 +96,7 @@ public class AuctionController {
     }
 
     @PostMapping("/{auctionItemsId}/bids")
-    public Bids bidsItem(@PathVariable Long auctionItemsId, @RequestBody Bids bids){
+    public Bids bidsItem(@PathVariable("auctionItemsId") Long auctionItemsId, @RequestBody Bids bids){
         return itemWriteService.bidsItem(auctionItemsId, bids);
     }
 
