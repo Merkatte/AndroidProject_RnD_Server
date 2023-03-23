@@ -6,13 +6,16 @@ import com.example.testproject.domain.auction.dto.response.AuctionSearchResultRe
 import com.example.testproject.domain.auction.dto.response.ItemResponseDTO;
 import com.example.testproject.domain.auction.dto.response.SearchKeyApiResponseDTO;
 import com.example.testproject.domain.auction.entity.*;
+import com.example.testproject.domain.auction.repository.AuctionItemsRepository;
 import com.example.testproject.domain.auction.service.ClassesWriteService;
 import com.example.testproject.domain.auction.service.ItemReadService;
 import com.example.testproject.domain.auction.service.ItemWriteService;
+import com.example.testproject.domain.user.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +27,8 @@ public class AuctionController {
     final private ItemWriteService itemWriteService;
     final private ItemReadService itemReadService;
     final private ClassesWriteService classesWriteService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuctionItemsRepository auctionItemsRepository;
 
     @PostMapping("/item-type")
     public ItemType registerItemType(@RequestBody ItemTypeRequestDTO itemTypeCommand){
@@ -98,6 +103,12 @@ public class AuctionController {
     @PostMapping("/{auctionItemsId}/bids")
     public Bids bidsItem(@PathVariable("auctionItemsId") Long auctionItemsId, @RequestBody Bids bids){
         return itemWriteService.bidsItem(auctionItemsId, bids);
+    }
+
+    @PostMapping("/{auctionItemsId}/accepted")
+    public void bidsAccepted(HttpServletRequest req, @PathVariable("auctionItemsId") Long auctionItemsId, @RequestBody BidsAcceptedRequestDTO bids){
+        Long bidsId = bids.getBidsId();
+        itemWriteService.bidsAccepted(req, auctionItemsId, bidsId);
     }
 
 }

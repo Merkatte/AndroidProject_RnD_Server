@@ -34,12 +34,15 @@ public class AuctionItems {
     @Column(nullable = false)
     LocalDateTime registeredAt;
 
-    @Column
+    @Column(nullable = false)
     Boolean completed;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "auctionItems")
     List<Bids> bids;
+
+    @Column
+    Integer highestBid;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -225,11 +228,12 @@ public class AuctionItems {
     Float will;
 
     @Builder
-    public AuctionItems(Long id, Item item, ItemRarity rarity, LocalDateTime registeredAt, Float defaultPhysicalWeaponDamage, Float defaultMagicalWeaponDamage, Float defaultArmorRating, Float actionSpeed, Float agility, Float armorPenetration, Float armorRating, Float armorRatingAdd, Float buffDurationBonus, Float debuffDurationBonus, Float headshotReductionMod, Float itemEquipSpeed, Float knowledge, Float magicalDamage, Float magicalDamageAdd, Float magicalDamageBonus, Float magicalDamageReduction, Float magicalDamageTrue, Float magicalHealing, Float magicalInteractionSpeed, Float magicalPower, Float magicalWeaponDamage, Float magicPenetration, Float magicResistance, Float maxHealthAdd, Float maxHealthBonus, Float moveSpeed, Float moveSpeedAdd, Float moveSpeedBonus, Float physicalDamageAdd, Float physicalDamageBonus, Float physicalDamageReduction, Float physicalDamageTrue, Float physicalHealing, Float physicalPower, Float physicalWeaponDamage, Float physicalWeaponDamageAdd, Float prestigeItemDrop, Float primitive, Float projectileReductionMod, Float regularInteractionSpeed, Float resourcefulness, Float spellCapacityAdd, Float spellCapacityBonus, Float spellCastingSpeed, Float strength, Float utilityEffectivenessAdd, Float utilityEffectivenessBonus, Float weaponDamageAdd, Float weightLimitAdd, Float weightLimitBonus, Float will) {
+    public AuctionItems(Long id, Item item, ItemRarity rarity, LocalDateTime registeredAt, Integer highestBid, Float defaultPhysicalWeaponDamage, Float defaultMagicalWeaponDamage, Float defaultArmorRating, Float actionSpeed, Float agility, Float armorPenetration, Float armorRating, Float armorRatingAdd, Float buffDurationBonus, Float debuffDurationBonus, Float headshotReductionMod, Float itemEquipSpeed, Float knowledge, Float magicalDamage, Float magicalDamageAdd, Float magicalDamageBonus, Float magicalDamageReduction, Float magicalDamageTrue, Float magicalHealing, Float magicalInteractionSpeed, Float magicalPower, Float magicalWeaponDamage, Float magicPenetration, Float magicResistance, Float maxHealthAdd, Float maxHealthBonus, Float moveSpeed, Float moveSpeedAdd, Float moveSpeedBonus, Float physicalDamageAdd, Float physicalDamageBonus, Float physicalDamageReduction, Float physicalDamageTrue, Float physicalHealing, Float physicalPower, Float physicalWeaponDamage, Float physicalWeaponDamageAdd, Float prestigeItemDrop, Float primitive, Float projectileReductionMod, Float regularInteractionSpeed, Float resourcefulness, Float spellCapacityAdd, Float spellCapacityBonus, Float spellCastingSpeed, Float strength, Float utilityEffectivenessAdd, Float utilityEffectivenessBonus, Float weaponDamageAdd, Float weightLimitAdd, Float weightLimitBonus, Float will) {
         this.id = id;
         this.item = item;
         this.rarity = rarity;
         this.registeredAt = registeredAt == null ? LocalDateTime.now() : registeredAt;
+        this.highestBid = highestBid;
         this.defaultPhysicalWeaponDamage = defaultPhysicalWeaponDamage;
         this.defaultMagicalWeaponDamage = defaultMagicalWeaponDamage;
         this.defaultArmorRating = defaultArmorRating;

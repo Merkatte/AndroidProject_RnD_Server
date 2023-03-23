@@ -1,4 +1,4 @@
-package com.example.testproject.application.controller;
+package com.example.testproject.application.controller.user;
 
 import com.example.testproject.application.usecase.user.RefreshUsecase;
 import com.example.testproject.application.usecase.user.FollowUsecase;

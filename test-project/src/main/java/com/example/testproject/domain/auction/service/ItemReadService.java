@@ -52,7 +52,7 @@ public class ItemReadService {
     public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(Map<String, String> options, Pageable pageable){
         Specification<AuctionItems> spec = Specification.where(null);
 
-        //option key type별 specification search
+        //option key type 별 specification search
         //String : itemName
         //Integer : itemCategory (itemType, itemParts)
         //Float : itemOptions
@@ -82,7 +82,7 @@ public class ItemReadService {
     }
 
     public AuctionResponseDTO getAuctionItem(Long auctionItemsId){
-        var auctionItem = auctionItemsRepository.findById(auctionItemsId).orElseThrow();
+        AuctionItems auctionItem = auctionItemsRepository.findById(auctionItemsId).orElseThrow();
         return new AuctionResponseDTO(auctionItem);
     }
 

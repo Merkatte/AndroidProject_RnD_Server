@@ -1,7 +1,6 @@
 package com.example.testproject.domain.auction.entity;
 
 import com.example.testproject.domain.user.entity.AppUser;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,12 +18,10 @@ public class Bids {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     AppUser appUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_items_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     AuctionItems auctionItems;
 
     @Column(nullable = false)
