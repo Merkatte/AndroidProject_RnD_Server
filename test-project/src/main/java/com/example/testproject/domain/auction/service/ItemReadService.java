@@ -50,6 +50,7 @@ public class ItemReadService {
     }
 
     public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(Map<String, String> options, Pageable pageable){
+        //TODO Rarity 검색 키워드 추가
         Specification<AuctionItems> spec = Specification.where(null);
 
         //option key type 별 specification search
@@ -57,23 +58,26 @@ public class ItemReadService {
         //Integer : itemCategory (itemType, itemParts)
         //Float : itemOptions
         for (Map.Entry<String, String> entry : options.entrySet()){
-            String option = entry.getKey();
-            if (Objects.equals(option, "page") || Objects.equals(option, "size") || Objects.equals(option, "order")){ // Pageable parameter 제외
+            String searchKey = entry.getKey();
+            if (Objects.equals(searchKey, "page") || Objects.equals(searchKey, "size") || Objects.equals(searchKey, "order")){ // Pageable parameter 제외
                 continue;
             }
-            else if(Objects.equals(option, "itemName")){
+            else if(Objects.equals(searchKey, "itemName")){
                 Item item = itemRepository.findByName(entry.getValue());
                 spec = spec.and(AuctionItemsSpecification.equalItemName("item", item));
             }
+            else if(Objects.equals(searchKey, "completed")){
+                boolean isCompleted = Boolean.parseBoolean(entry.getValue());
+                spec = spec.and(AuctionItemsSpecification.filterCompleted(searchKey, isCompleted));
+            }
             else if(!entry.getValue().contains(".")){
                 Long value = Long.parseLong(entry.getValue());
-                spec = spec.and(AuctionItemsSpecification.equalItemCategory(option, value));
+                spec = spec.and(AuctionItemsSpecification.equalItemCategory(searchKey, value));
             }
             else{
                 Float value = Float.parseFloat(entry.getValue());
-                spec = spec.and(AuctionItemsSpecification.greaterThanOptionValue(option, value));
+                spec = spec.and(AuctionItemsSpecification.greaterThanOptionValue(searchKey, value));
             }
-
         }
 
         Page<AuctionItems> searchItems =  auctionItemsRepository.findAll(spec, pageable);
