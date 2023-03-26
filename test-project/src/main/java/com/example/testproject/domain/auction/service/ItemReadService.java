@@ -50,7 +50,6 @@ public class ItemReadService {
     }
 
     public List<AuctionSearchResultResponseDTO> getAuctionItemsSearch(Map<String, String> options, Pageable pageable){
-        //TODO Rarity 검색 키워드 추가
         Specification<AuctionItems> spec = Specification.where(null);
 
         //option key type 별 specification search

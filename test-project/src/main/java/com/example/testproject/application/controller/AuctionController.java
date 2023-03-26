@@ -1,10 +1,7 @@
 package com.example.testproject.application.controller;
 
 import com.example.testproject.domain.auction.dto.request.*;
-import com.example.testproject.domain.auction.dto.response.AuctionResponseDTO;
-import com.example.testproject.domain.auction.dto.response.AuctionSearchResultResponseDTO;
-import com.example.testproject.domain.auction.dto.response.ItemResponseDTO;
-import com.example.testproject.domain.auction.dto.response.SearchKeyApiResponseDTO;
+import com.example.testproject.domain.auction.dto.response.*;
 import com.example.testproject.domain.auction.entity.*;
 import com.example.testproject.domain.auction.repository.AuctionItemsRepository;
 import com.example.testproject.domain.auction.service.ClassesWriteService;
@@ -101,8 +98,9 @@ public class AuctionController {
     }
 
     @PostMapping("/{auctionItemsId}/bids")
-    public Bids bidsItem(@PathVariable("auctionItemsId") Long auctionItemsId, @RequestBody Bids bids){
-        return itemWriteService.bidsItem(auctionItemsId, bids);
+    public Long bidsItem(@PathVariable("auctionItemsId") Long auctionItemsId, @RequestBody Bids bids){
+        Bids newBid = itemWriteService.bidsItem(auctionItemsId, bids);
+        return newBid.getAuctionItems().getId();
     }
 
     @PostMapping("/{auctionItemsId}/accepted")
