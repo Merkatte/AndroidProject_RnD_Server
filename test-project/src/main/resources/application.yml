@@ -1,0 +1,48 @@
+spring:
+  web:
+    resources:
+      static-locations: classpath:/static/
+  redis:
+    host: localhost
+    port: '6379'
+  mvc:
+    static-path-pattern: /static/**
+    throw-exception-if-no-handler-found: 'true'
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: '1000'
+        order_updates: 'true'
+        order_inserts: 'true'
+    hibernate:
+      ddl-auto: update
+  datasource:
+    password: shquddn970508!
+    username: root
+    url: jdbc:mysql://127.0.0.1:3306/test_project?rewriteBatchedStatements=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&autoReconnect=true
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: 'false'
+
+jwt:
+  refresh-token-validity-in-seconds: '86400000'
+  access-token-validity-in-seconds: '7200000'
+  secret: and0LXRlc3QtYWxqamFiYWVnaS1qd3QtdGVzdC1hbGpqYWJhZWdpLWp3dC10ZXN0LWFsamphYmFlZ2ktand0LXRlc3QtYWxqamFiYWVnaS1qd3QtdGVzdC1hbGpqYWJhZWdpLWp3dC10ZXN0LWFsamphYmFlZ2ktand0LXRlc3QtYWxqamFiYWVnaS1qd3QtdGVzdC1hbGpqYWJhZWdp
+
+server:
+  address: 0.0.0.0
+  error:
+    include-exception: 'true'
+    include-message: always
+  port: '8080'
+
+static:
+  path: /Users/byungwoonoh/RnD_Project/test-project/static
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          core: TRACE
