@@ -1,10 +1,10 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.7.2'
+	id 'org.springframework.boot' version '2.7.10'
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'com.example'
+group = 'dnd.auction'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
@@ -49,6 +49,9 @@ dependencies {
 
 	//Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//Kafka
+//	implementation 'org.springframework.kafka:spring-kafka:3.0.4'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

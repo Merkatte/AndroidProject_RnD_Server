@@ -1,8 +1,8 @@
 package dnd.auction.domain.auction.entity;
 
-import dnd.auction.domain.user.entity.AppUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dnd.auction.domain.user.entity.AppUser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +41,7 @@ public class AuctionItems {
     @OneToMany(mappedBy = "auctionItems")
     List<Bids> bids;
 
-    @Column
+    @Column(nullable = false)
     Integer highestBid;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -53,6 +53,7 @@ public class AuctionItems {
     private void setDefault(){
         this.registeredAt = LocalDateTime.now();
         this.completed = false;
+        this.highestBid = 0;
     }
 
     // Default Options

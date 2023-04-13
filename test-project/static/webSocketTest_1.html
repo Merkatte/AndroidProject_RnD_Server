@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WebSocket Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<button onclick="sendNotification('Hello world!', 2)">Send Notification</button>
+<div id="notifications">message</div>
+
+<script>
+    const socket = new WebSocket('ws://localhost:8080/ws');
+    const stompClient = Stomp.over(socket);
+    let userId = 1
+
+    stompClient.connect({}, function (frame) {
+        console.log('Connected : ' + frame);
+        stompClient.subscribe('/user/' + "7" + '/receive-notification', function (notification) {
+            const message = JSON.parse(notification.body);
+            const newMessage = document.createElement("div");
+            const notificationContainer = document.getElementById("notifications")
+            console.log(notificationContainer)
+            newMessage.innerHTML += message.message;
+            notificationContainer.appendChild(newMessage);
+        }, {"userId" : 1});
+    });
+
+    function sendNotification(message, userId) {
+        stompClient.send('/app/user/' + userId + '/send-notification', {}, JSON.stringify({
+            message: message,
+            userId: userId,
+            auctionItemsId: 1,
+        }));
+    }
+</script>
+</body>
+</html>
